@@ -7,6 +7,8 @@ from models import *
 from django.views.decorators.csrf import csrf_exempt
 
 import json
+import random
+
 
 def receiveName (request, professorName, class_label):
 	# take request
@@ -59,7 +61,8 @@ def receiveQuestion (request, professorName, class_label, question):
 	requestedClassName=requestbody['className']
 	requestedText = requestbody['text']
 	requestedOptions = requestbody['options']
-	correctNumber = requestbody['correct']
+	correctNumber = random.randint(0,len(requestedOptions)-1)
+	random.randint(a, b)
 
 	qroom = Room(label=class_label)
 	qroom.save()
@@ -72,6 +75,12 @@ def receiveQuestion (request, professorName, class_label, question):
 	requestedQuestion.save()
 
 	# fill each option from requestedOptions list text
+
+	if len(requestedOptions)>0:
+		tempop = requestedOptions[0]
+		requestedOptions[0] = requestedOptions[correctNumber]
+		requestedOptions[correctNumber] = tempop
+
 	for index in range(len(requestedOptions)):
 		requestedOption = Option(question=requestedQuestion, 
         	sequence=index, 
@@ -88,6 +97,20 @@ def receiveQuestion (request, professorName, class_label, question):
 		"question_id": requestedQuestion.id,
 		"options_text": requestedOptions})
 
+def getGraphNumbers (request):
+	activeQ = Questions.objects.get(active=True)
+	optionlist = Options.objects.get(question=activeQ)
+
+	tuplist = []
+	for index in range(len(optionlist)):
+		tuplist.append((optionlist[index].sequence,Student.objects.filter(options=optionlist[index]).count()))
+
+	tuplist.sort(key=lambda x: x[0])
+
+	return JsonResponse({
+			"options": [x[0] for x in tuplist],
+			"numbers": [x[1] for x in tuplist]
+		})
 
 def index(request):
 	ctd = {}
