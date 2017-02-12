@@ -29,10 +29,24 @@ def receiveName (request):
 
 
 def receiveQuestion (request):
-	requestedClassName=request.Get.get('className')
 	requestedProfName=request.Get.get('profName')
-	requestedText = request.Get.get('text')
-	requestedOptions = request.Get.get('options')
+	prof = Professor.object.get(profName=requestedProfName)
+	requestedClassName=request.Post.get('className')
+	requestedText = request.Post.get('text')
+	requestedOptions = request.Post.get('options')
+	correctNumber = int(request.Post.get('correct'))
+
+	requestedQuestion = Question(className = requestedClassName, professor=prof, text=requestedText,active=true)
+	requestedQuestion.save()
+
+	for index in range(len(requestedOptions)):
+        requestedOption = Option(question= requestedQuestion,sequence=index, text=requestedOptions[index], correct =false)
+        if index==correctNumber:
+        	requestedOption.correct = true
+        requestedOption.save()
+
+    return JsonResponse({'prof_name': requestedProfName, 'prof':prof, 'question_name'=requestedQuestion.profName, 'question'=requestedQuestion})
+
 
 def index(request):
 	ctd = {}
