@@ -190,7 +190,7 @@ def ws_publish(question, room):
 	options = []
 	for option in question.options.all():
 		options.append((option.id, option.text))
-	m = {'activate': True, 'activatequestion_id': question.id, 'question_text': question.text, 'options': options}
+	m = {'activate': True, 'question_id': question.id, 'question_text': question.text, 'options': options}
 	Group('chat-'+room.label).send({'text': json.dumps(m)})
 
 def ws_unpublish(question, room):
