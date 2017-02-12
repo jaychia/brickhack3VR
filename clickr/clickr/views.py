@@ -22,9 +22,11 @@ def receiveName (request, professorName, class_label):
 			for profques in profquestions:
 				question_texts.append(profques.text)
 				question_ids.append(profques.id)
-			return JsonResponse({"new_prof": False, "questions": question_texts, "question_ids": question_ids})
+			return JsonResponse({"new_prof": False, "prof_name": professorName,
+				"id":prof.id, "class" = class_label,"questions": question_texts, "question_ids": question_ids})
 		
-		return JsonResponse({"questions": [], "question_ids": []})
+		return JsonResponse({"new_prof": False, "prof_name": professorName, "id":prof.id,
+			"class" = class_label, "questions": [], "question_ids": []})
 
 	prof = Professor(profName = professorName)
 	prof.save()
@@ -32,7 +34,8 @@ def receiveName (request, professorName, class_label):
 
 	room, create = Room.objects.get_or_create(label=class_label)
 
-	return JsonResponse({'new_prof': new_prof, 'prof_name': professorName, 'id':prof.id})
+	return JsonResponse({"new_prof": True, "prof_name": professorName,
+		"id":prof.id,"class" = class_label,"questions": [], "question_ids": []})
 
 @csrf_exempt
 def receiveQuestion (request, professorName, question):
@@ -63,7 +66,10 @@ def receiveQuestion (request, professorName, question):
 
 	return JsonResponse({
 		"prof_name": professorName, 
+		"prof_id": prof.id,
 		"question_text": requestedQuestion.text,
+		"question_id": requestedQuestion.id,
+		
 		"options_text": requestedOptions})
 
 
