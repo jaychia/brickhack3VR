@@ -110,7 +110,7 @@ def turnOffQuestion(request, questionID):
 	activeQ = Question.objects.get(pk=questionID)
 	activeQ.active = False
 	activeQ.save()
-	optionlist = Options.objects.get(question=activeQ)
+	optionlist = list(Option.objects.filter(question=activeQ).all())
 
 	tuplist = []
 	for index in range(len(optionlist)):

@@ -34,5 +34,7 @@
 	margin: 20px;
 }
 .option {
-	border-style: bold;
+	width:100%%;
+	background-color: rgba(200,200,200,0.5);
+	border: 1px;
 }
