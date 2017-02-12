@@ -140,14 +140,9 @@ def studentAnswers(request, studentID, questionID, optionSeq):
 	for opt in thisStudent.options:
 		if opt.question.id == questionID:
 			overlap = True
-			overlapOption = opt
+			thisStudent.options.remove(opt)
 
-	if overlap:
-		thisStudent.options.remove(overlapOption)
-		thisStudent.options.add(Option.objects.get(question=Question.objects.get(pk=questionsID, sequence=optionSeq)))
-
-	else:
-		thisStudent.options = thisStudent.options.add(Option.objects.get(question=Question.objects.get(pk=questionsID), sequence=optionSeq))
+	thisStudent.options.add(Option.objects.get(question=Question.objects.get(pk=questionsID), sequence=optionSeq))
 
 	return JsonResponse({
 		"answer_changed": overlap,
