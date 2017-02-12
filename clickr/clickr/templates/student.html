@@ -2,5 +2,48 @@
 
 
 {% block body %}
-STUDENT
+<form class="form-horizontal centered shadowed" id="js-login-div">
+		<input id="login-field" class="formfield" type="text" placeholder="What is your name, young one?" name="name">
+		<input id="class-field" class="formfield" type="text" placeholder="Which horrid class are you embarking upon today?" name="class_label">
+		<input id="login-submit" type="submit">
+</form>
+<div class="col-xs-6 well bs-component centered shadowed" id="js-active-div">
+
+</div>
+{% endblock %}
+
+{% block footer %}
+<script>
+	$(function() {
+		var loginButton = $("#login-submit");
+		var loginField = $("#login-field");
+		var classField = $("#class-field");
+		var loginForm = $("#js-login-div");
+		var activeDiv = $("#js-active-div");
+		var profnamebanner = $("#profnamebanner");
+
+		activeDiv.hide();
+
+		loginButton.click(function(e){
+			e.preventDefault();
+			$.ajax({
+				url: "student/" + loginField.val() + '/' + classField.val(),
+				success: function(resp) {
+					showClassroom(resp);
+				},
+				error: function() {
+					alert('shit!');
+				}
+			});
+		});
+
+		function showClassroom(resp) {
+			console.log(resp);
+			profnamebanner.text("Welcome, " + resp.student_name);
+			loginForm.hide();
+			activeDiv.show();
+		}
+
+	});
+</script>
 {% endblock %}

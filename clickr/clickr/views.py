@@ -34,6 +34,19 @@ def receiveName (request, professorName, class_label):
 
 	return JsonResponse({'new_prof': new_prof, 'prof_name': professorName, 'id':prof.id})
 
+def receiveStudentName (request, studentName, class_label):
+	student, created = Student.objects.get_or_create(name=studentName)
+	room, created = Room.objects.get_or_create(label=class_label)
+	questions = room.questions.all()
+	questions_list = [(question.id, question.text, question.options.all()) for question in questions]
+
+
+	return JsonResponse({
+			"questions": questions_list,
+			"class_label": room.label,
+			"student_name": student.name,
+		})
+
 @csrf_exempt
 def receiveQuestion (request, professorName, question):
 	# requestedProfName=request.Get.get('profName')
