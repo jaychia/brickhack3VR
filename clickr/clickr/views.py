@@ -109,6 +109,7 @@ def receiveQuestion (request, professorName, class_label):
 def turnOffQuestion(request, questionID):
 	activeQ = Questions.objects.get(pk=questionID)
 	activeQ.active = False
+	activeQ.save()
 	optionlist = Options.objects.get(question=activeQ)
 
 	tuplist = []
@@ -123,11 +124,13 @@ def turnOffQuestion(request, questionID):
 def turnOnQuestion(request, questionID):
 	
 	if Question.objects.filter(active=True).exists():
-		Question.objects.get(active=True).active = False
+		for ques in Question.objects.filter(active=True):
+			ques.active = False
+			ques.save()
 
-	q = Question.objects.get(pk=questionID)
-	q.active = True
-	q.save()
+	thisq = Question.objects.get(pk=questionID)
+	thisq.active = True
+	thisq.save()
 
 	ws_publish(q, q.room)
 
@@ -144,9 +147,11 @@ def studentAnswers(request, studentID, questionID, optionSeq):
 		if opt.question.id == questionID:
 			overlap = True
 			thisStudent.options.remove(opt)
+			thisStudent.save()
 
 	thisStudent.options.add(Option.objects.get(question=Question.objects.get(pk=questionsID), sequence=optionSeq))
-
+	thisStudent.save()
+	
 	return JsonResponse({
 		"answer_changed": overlap,
 		"student_id": studentID,
