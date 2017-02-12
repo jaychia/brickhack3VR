@@ -18,4 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'/prof/<profName>', views.receiveName, name="receive_name"),
+    url(r'/prof/<profName>/<question>', views.receiveQuestion, name="receive_question")
+
 ]
