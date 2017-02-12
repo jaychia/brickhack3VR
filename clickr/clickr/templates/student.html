@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 
+{% block bannertext %}
+	<div id="profnamebanner">CLASSROOM THE FREE</div>
+{% endblock %}
+
 {% block body %}
 <form class="form-horizontal centered shadowed" id="js-login-div">
 		<input id="login-field" class="formfield" type="text" placeholder="What is your name, young one?" name="name">
@@ -8,42 +12,13 @@
 		<input id="login-submit" type="submit">
 </form>
 <div class="col-xs-6 well bs-component centered shadowed" id="js-active-div">
-
+	<div id="js-new-questions"></div>
+	<div id="js-old-questions"></div>
 </div>
 {% endblock %}
 
 {% block footer %}
-<script>
-	$(function() {
-		var loginButton = $("#login-submit");
-		var loginField = $("#login-field");
-		var classField = $("#class-field");
-		var loginForm = $("#js-login-div");
-		var activeDiv = $("#js-active-div");
-		var profnamebanner = $("#profnamebanner");
-
-		activeDiv.hide();
-
-		loginButton.click(function(e){
-			e.preventDefault();
-			$.ajax({
-				url: "student/" + loginField.val() + '/' + classField.val(),
-				success: function(resp) {
-					showClassroom(resp);
-				},
-				error: function() {
-					alert('shit!');
-				}
-			});
-		});
-
-		function showClassroom(resp) {
-			console.log(resp);
-			profnamebanner.text("Welcome, " + resp.student_name);
-			loginForm.hide();
-			activeDiv.show();
-		}
-
-	});
-</script>
+<script src="static/js/reconnecting-websocket.min.js"></script>
+<script src="static/js/socket.js"></script>
+<script src="static/js/student.js"></script>
 {% endblock %}

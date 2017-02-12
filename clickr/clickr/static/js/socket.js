@@ -1,22 +1,29 @@
-$(function() {
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-	var chat_socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/waitforquestion" + window.location.pathname);
+	var chat_socket = null;
+	var name = "";
 
-	$('#chatform').on('submit', function(event) {
+	function initiateSocket(name, label) {
+		console.log('Initializing websocket.');
+		name = name;
+		console.log(ws_scheme + '://' + window.location.host + "/clickr/" + label);
+		chat_socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/clickr/" + label);
+		chat_socket.onmessage = function(message) {
+	    var data = JSON.parse(message.data);
+	    $('#js-new-question').append($("<div>" + data.question_text + "</div>"));
+	    for (i in data.options) {
+	    	$('#js-new-question').append(
+	    		$("<div class='optionSelect' text=" + data.options[i][0] + "qn=" + data.question_id + " >" + data.options[i][1] + "</div>")
+	    	);
+	   	};
+   };
+	}
+
+	$('.optionSelect').on('click', function(event) {
 	    var message = {
-	        name: $('#name').val(),
-	        option: $('#option').val(),
+	        name: name,
+	        question: $(this).attr('qn'),
+	        option: $(this).attr('text'),
 	    }
 	    chat_socket.send(JSON.stringify(message));
 	    return false;
 	});
-
-	chatsocket.onmessage = function(message) {
-    var data = JSON.parse(message.data);
-    $('#question').append(
-    	data.question_text;
-    	data.options;
-    	);
-   	};
-});
-
