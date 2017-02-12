@@ -132,7 +132,7 @@ def turnOnQuestion(request, questionID):
 	thisq.active = True
 	thisq.save()
 
-	ws_publish(q, q.room)
+	ws_publish(thisq, thisq.room)
 
 	return JsonResponse({})
 
