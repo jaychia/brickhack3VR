@@ -15,7 +15,7 @@ class Option(models.Model):
     sequence = models.IntegerField()
     text = models.TextField()
     correct = models.BooleanField()
-    room = models.ForeignKey('Room', related_name='options')
+    # room = models.ForeignKey('Room', related_name='options')
 
 class Student(models.Model):
     options = models.ManyToManyField(Option)
@@ -24,4 +24,4 @@ class Student(models.Model):
 
 class Room(models.Model):
     label = models.TextField(null=False, unique=True)
-    name = models.TextField(null=False)
+    # name = models.TextField(null=False)
