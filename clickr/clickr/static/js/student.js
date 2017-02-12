@@ -10,7 +10,6 @@ $(function() {
 		activeDiv.hide();
 
 		loginButton.click(function(e){
-			e.preventDefault();
 			$.ajax({
 				url: "student/" + loginField.val() + '/' + classField.val(),
 				success: function(resp) {
@@ -20,6 +19,7 @@ $(function() {
 					alert('shit!');
 				}
 			});
+			return false;
 		});
 
 		function showClassroom(resp) {

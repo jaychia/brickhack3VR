@@ -24,7 +24,9 @@ urlpatterns = [
     url(r'^prof$', views.prof, name="prof_home"),
     url(r'^student$', views.student, name="student_home"),
     url(r'^student/(?P<studentName>[a-zA-Z]+)/(?P<class_label>[a-zA-Z0-9]+)/$', views.receiveStudentName, name='receiveStudentName'),
+    url(r'^activate/(?P<questionID>[a-zA-Z0-9]+)/$', views.turnOnQuestion, name='turnOnQuestion'),
+    url(r'^deactivate/(?P<questionID>[a-zA-Z0-9]+)/$', views.turnOffQuestion, name='turnOffQuestion'),
     url(r'^$', views.index, name="home"),
-    url(r'^student/room$', views.get_room, name="get_room"),
+    url(r'^student/$', views.get_room, name="get_room"),
 ]
 

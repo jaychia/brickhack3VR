@@ -28,6 +28,19 @@
 
 {% block footer %}
 <script>
+	$(document).on('click','.activatebutton',function(e){
+		e.preventDefault();
+		$.ajax({
+				url: "activate/" + $(this).attr('data-id') + '/',
+				success: function(resp) {
+					alert('it worked');
+				},
+				error: function() {
+					alert('shit!');
+				}
+			});
+		return false;
+	});
 	$(function() {
 		var count = 0;
 		var addButton = $("#js-add-question");
@@ -76,7 +89,7 @@
 			loginForm.hide();
 			activeDiv.show();
 			for (i = 0; i < resp.questions.length; i++) {
-				var q = $("<div class='question'>" + resp.questions[i] + "<form ><input action='prof/activate/" + resp.question_ids[i].toString() + "' type='submit' value='Activate'></input></form></div>");
+				var q = $("<div class='question'>" + resp.questions[i] + "<form ><input data-id='" + resp.question_ids[i].toString() + "' type='submit' value='Activate' class='activatebutton'></input></form></div>");
 			questions.append(q);
 			}
 		}
@@ -102,7 +115,7 @@
 		});
 
 		function addQuestion(text, id) {
-			var q = $("<div class='question'>" + text + "<form ><input action='prof/activate/" + id.toString() + "' type='submit' value='Activate'></input></form></div>");
+			var q = $("<div class='question'>" + text + "<form ><input data-id='" + resp.question_ids[i].toString() + "' type='submit' value='Activate' class='activatebutton'></input></form></div>");
 			questions.append(q);
 		}
 

@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
+from channels import Group
 
 from models import *
 
@@ -116,7 +117,7 @@ def turnOffQuestion(request, questionID):
 	tuplist.sort(key=lambda x: x[0])
 
 	return JsonResponse({
-			"counts": [x[1] for x in tuplist]
+			# "counts": [x[1] for x in tuplist]
 		})
 
 def turnOnQuestion(request, questionID):
@@ -124,11 +125,13 @@ def turnOnQuestion(request, questionID):
 	if Question.objects.filter(active=True).exists():
 		Question.objects.get(active=True).active = False
 
-	Question.objects.get(pk=questionID).active = True
+	q = Question.objects.get(pk=questionID)
+	q.active = True
+	q.save()
 
-	return JsonResponse({
-		"question_id": questionID,
-		"options_text": requestedOptions})
+	ws_publish(q, q.room)
+
+	return JsonResponse({})
 
 def studentAnswers(request, studentID, questionID, optionSeq):
 	
@@ -177,3 +180,10 @@ def get_room(request):
 	    'class': room,
 	    'questions': questions,
 	})
+
+def ws_publish(question, room):
+	options = []
+	for option in question.options.all():
+		options.append((option.id, option.text))
+	m = {'question_id': question.id, 'question_text': question.text, 'options': options}
+	Group('chat-'+room.label).send({'text': json.dumps(m)})

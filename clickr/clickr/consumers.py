@@ -1,16 +1,16 @@
+from django.http import JsonResponse
 from channels import Group
 from channels.sessions import channel_session
 from .models import Room
 
 @channel_session
 def ws_connect(message):
-	print(message['path'])
 	prefix, label = message['path'].strip('/').split('/')
 	room = Room.objects.get(label=label)
-	print('here')
 	Group('chat-' + label).add(message.reply_channel)
 	message.channel_session['room'] = room.label
-	print('done')
+	message.reply_channel.send({"accept": True})
+
 
 @channel_session
 def ws_receive(message):
@@ -35,10 +35,3 @@ def ws_receive(message):
 def ws_disconnect(message):
     label = message.channel_session['room']
     Group('chat-'+label).discard(message.reply_channel)
-
-def ws_publish(question, room):
-	options = []
-	for option in question.options:
-		options.append((option.id, option.text))
-	m = {'question_id': question.id, 'question_text': question.txt, 'options': options}
-	Group('chat-'+label).send({'text': json.dumps(m)})

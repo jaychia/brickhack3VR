@@ -9,9 +9,10 @@
 		chat_socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/clickr/" + label);
 		chat_socket.onmessage = function(message) {
 	    var data = JSON.parse(message.data);
-	    $('#js-new-question').append($("<div>" + data.question_text + "</div>"));
+	    console.log(data);
+	    $('#js-new-questions').append($("<div>" + data.question_text + "</div>"));
 	    for (i in data.options) {
-	    	$('#js-new-question').append(
+	    	$('#js-new-questions').append(
 	    		$("<div class='optionSelect' text=" + data.options[i][0] + "qn=" + data.question_id + " >" + data.options[i][1] + "</div>")
 	    	);
 	   	};
