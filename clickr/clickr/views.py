@@ -110,7 +110,7 @@ def turnOffQuestion(request, questionID):
 	activeQ = Question.objects.get(pk=questionID)
 	activeQ.active = False
 	activeQ.save()
-	optionlist = Options.objects.get(question=activeQ)
+	optionlist = list(Options.objects.filter(question=activeQ).all())
 
 	tuplist = []
 	for index in range(len(optionlist)):
@@ -190,10 +190,10 @@ def ws_publish(question, room):
 	options = []
 	for option in question.options.all():
 		options.append((option.id, option.text))
-	m = {'type': 'activate','activatequestion_id': question.id, 'question_text': question.text, 'options': options}
+	m = {'activate': True, 'activatequestion_id': question.id, 'question_text': question.text, 'options': options}
 	Group('chat-'+room.label).send({'text': json.dumps(m)})
 
 def ws_unpublish(question, room):
-	m = {'type': 'deactivate','question_id': question.id, 'question_text': question.text}
+	m = {'activate': False, 'question_id': question.id, 'question_text': question.text}
 	Group('chat-'+room.label).send({'text': json.dumps(m)})
 
