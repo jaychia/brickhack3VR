@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.shortcuts import render
 
 from .models import Professor
 from .models import Question
@@ -24,7 +25,7 @@ def receiveName (request):
 	 # return JsonResponse({"new_prof": new_prof, "prof_name": requestedProfName, "questions": requestedQuestion}
 	 # {"id": int, "text": String})
 
-	 return JsonResponse({'new_prof': new_prof, 'prof_name': requestedProfName, 'id':prof.id})
+	return JsonResponse({'new_prof': new_prof, 'prof_name': requestedProfName, 'id':prof.id})
 
 
 def receiveQuestion (request):
@@ -32,3 +33,7 @@ def receiveQuestion (request):
 	requestedProfName=request.Get.get('profName')
 	requestedText = request.Get.get('text')
 	requestedOptions = request.Get.get('options')
+
+def index(request):
+	ctd = {}
+	return render(request, 'index.html', context=ctd)
