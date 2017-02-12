@@ -2,5 +2,70 @@
 
 
 {% block body %}
-PROF
+<div class="col-xs-6 well bs-component centered" id="js-login-div">
+	<form class="form-horizontal">
+		<input id="login-field" class="formfield" type="text" placeholder="What is your name, monseiur?" name="name">
+		<input id="login-submit" type="submit">
+	</form>
+</div>
+<div class="col-xs-6 well bs-component centered" id="js-active-div">
+	<form class="form-horizontal">
+		<input class="formfield" type="text" placeholder="Question?" name="question">
+		<div id="js-new">
+		<input type="text" class="option formfield" placeholder="Option A">
+		</div>
+		<button id="js-add-question">Add</button>
+		<input type="submit" value="Lock n' Load!">
+	</form>
+	<div id="js-questions">
+	</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<script>
+	$(function() {
+		var count = 0;
+		var addButton = $("#js-add-question");
+		var jsnew = $("#js-new");
+		var loginButton = $("#login-submit");
+		var loginField = $("#login-field");
+		var loginForm = $("#js-login-div");
+		var questions = $("#js-questions");
+		var activeDiv = $("#js-active-div");
+
+		activeDiv.hide();
+		console.log('hidden');
+
+		addButton.click(function(e){
+			e.preventDefault();
+			if (count > 3) {return;}
+			count++;
+			var letter = String.fromCharCode(97 + count).toUpperCase();
+			var newOption = $("<input type='text' class='option formfield' placeholder='Option " + letter + "''>");
+			jsnew.append(newOption);
+		});
+
+		loginButton.click(function(e){
+			e.preventDefault();
+			console.log(loginField.text);
+			$.ajax({
+				url: "prof/" + loginField.val(),
+				success: function(resp) {
+					showQuestions(resp);
+				},
+				error: function() {
+					alert('shit!');
+				}
+			});
+		});
+
+		function showQuestions(resp) {
+			loginForm.hide();
+			activeDiv.show();
+			questions.append(resp);
+		}
+
+	});
+</script>
 {% endblock %}
