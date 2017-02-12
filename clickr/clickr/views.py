@@ -7,53 +7,49 @@ from .models import Question
 from .models import Option
 from .models import Student
 
+from django.views.decorators.csrf import csrf_exempt
 
-def receiveName (request, profName):
+def receiveName (request, professorName):
 	# take request
-	print(profName)
-	
-	requestedProfName=request.Get.get('profName')
-	# requestedClassName=request.Get.get('className')
-	# requestedText=request.Get.get('text')
 
-	if Professor.objects.filter(profName=requestedProfName.exists()):
-		new_prof = false
+	if Professor.objects.filter(profName=professorName).exists():
+		new_prof = False
 	else:
-		new_prof = true
-        prof = Professor(profName = requestedProfName)
+		new_prof = True
+        prof = Professor(profName = professorName)
         prof.save()
 
-	 # return JsonResponse({"new_prof": new_prof, "prof_name": requestedProfName, "questions": requestedQuestion}
-	 # {"id": int, "text": String})
+	return JsonResponse({'new_prof': new_prof, 'prof_name': professorName, 'id':prof.id})
 
-	return JsonResponse({'new_prof': new_prof, 'prof_name': requestedProfName, 'id':prof.id})
+@csrf_exempt
+def receiveQuestion (request, professorName, question):
+	# requestedProfName=request.Get.get('profName')
+	prof = Professor.objects.get(profName=professorName)
+	requestedClassName=request.POST.get('className')
+	requestedText = request.POST.get('text')
+	requestedOptions = request.POST.get('options')
+	correctNumber = request.POST.get('correct')
 
-
-def receiveQuestion (request, profName, question):
-	requestedProfName=request.Get.get('profName')
-	prof = Professor.object.get(profName=requestedProfName)
-	requestedClassName=request.Post.get('className')
-	requestedText = request.Post.get('text')
-	requestedOptions = request.Post.get('options')
-	correctNumber = int(request.Post.get('correct'))
-
-	requestedQuestion = Question(className = requestedClassName, professor=prof, text=requestedText,active=true)
+	requestedQuestion = Question(className=requestedClassName,
+								 professor=prof,
+								 text=requestedText,
+								 active=False)
 	requestedQuestion.save()
 
+	# fill each option from requestedOptions list text
 	for index in range(len(requestedOptions)):
 		requestedOption = Option(question=requestedQuestion, 
         	sequence=index, 
         	text=requestedOptions[index], 
         	correct=false)
         if index==correctNumber:
-        	requestedOption.correct = true
+        	requestedOption.correct = True
         requestedOption.save()
 
 	return JsonResponse({
-		'prof_name': requestedProfName, 
-		'prof': prof, 
-		'question_name': requestedQuestion.profName, 
-		'question': requestedQuestion})
+		"prof_name": professorName, 
+		"prof": prof, 
+		"question": requestedQuestion})
 
 
 def index(request):
