@@ -97,20 +97,32 @@ def receiveQuestion (request, professorName, class_label, question):
 		"question_id": requestedQuestion.id,
 		"options_text": requestedOptions})
 
-def getGraphNumbers (request):
-	activeQ = Questions.objects.get(active=True)
+def turnOffQuestion(request, questionID):
+	activeQ = Questions.objects.get(pk=questionID)
+	activeQ.active = False
 	optionlist = Options.objects.get(question=activeQ)
 
 	tuplist = []
 	for index in range(len(optionlist)):
 		tuplist.append((optionlist[index].sequence,Student.objects.filter(options=optionlist[index]).count()))
-
 	tuplist.sort(key=lambda x: x[0])
 
 	return JsonResponse({
-			"options": [x[0] for x in tuplist],
-			"numbers": [x[1] for x in tuplist]
+			"counts": [x[1] for x in tuplist]
 		})
+
+def turnOnQuestion(request, questionID):
+	
+	if Question.objects.filter(active=True).exists():
+		Question.objects.get(active=True).active = False
+
+	Question.objects.get(pk=questionID).active = True
+
+	return JsonResponse({
+		"question_id": questionID,
+		"options_text": requestedOptions})
+
+
 
 def index(request):
 	ctd = {}
