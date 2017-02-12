@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 
+{% block bannertext %}
+	<div id="profnamebanner">Welcome, Professor</div>
+{% endblock %}
 
 {% block body %}
-<div class="col-xs-6 well bs-component centered" id="js-login-div">
+<div class="col-xs-6 well bs-component centered shadowed" id="js-login-div">
 	<form class="form-horizontal">
 		<input id="login-field" class="formfield" type="text" placeholder="What is your name, monseiur?" name="name">
 		<input id="login-submit" type="submit">
 	</form>
 </div>
-<div class="col-xs-6 well bs-component centered" id="js-active-div">
+<div class="col-xs-6 well bs-component centered shadowed" id="js-active-div">
 	<form class="form-horizontal">
 		<input class="formfield" type="text" placeholder="Question?" name="question">
 		<div id="js-new">
@@ -33,9 +36,9 @@
 		var loginForm = $("#js-login-div");
 		var questions = $("#js-questions");
 		var activeDiv = $("#js-active-div");
+		var profnamebanner = $("#profnamebanner");
 
 		activeDiv.hide();
-		console.log('hidden');
 
 		addButton.click(function(e){
 			e.preventDefault();
@@ -48,7 +51,6 @@
 
 		loginButton.click(function(e){
 			e.preventDefault();
-			console.log(loginField.text);
 			$.ajax({
 				url: "prof/" + loginField.val(),
 				success: function(resp) {
@@ -61,9 +63,11 @@
 		});
 
 		function showQuestions(resp) {
+			console.log(resp.prof_name);
+			profnamebanner.text("Welcome, " + resp.prof_name);
 			loginForm.hide();
 			activeDiv.show();
-			questions.append(resp);
+			questions.append(resp.questions);
 		}
 
 	});
