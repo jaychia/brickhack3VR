@@ -32,10 +32,10 @@ def receiveName (request, professorName, class_label):
 	prof.save()
 
 
-	# room, create = Room.objects.get_or_create(label=class_label)
+	room, create = Room.objects.get_or_create(label=class_label)
 
 	return JsonResponse({"new_prof": True, "prof_name": professorName,
-		"id":prof.id,"class": class_label,"questions": [], "question_ids": []})
+		"id":prof.id,"class": class_label,"questions": [], "question_ids": [], "room_label": room.label})
 
 def receiveStudentName (request, studentName, class_label):
 	student, created = Student.objects.get_or_create(name=studentName)
