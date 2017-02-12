@@ -1,18 +1,29 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="static/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="static/css/custom.css">
 </head>
 
-<nav class="navbar-default">
-  <a href="/student">Student</a> |
-  <a href="/prof">Prof</a> |
+<nav class="navbar navbar-fixed-top">
+  <div class="container-fluid">
+  <div class="navbar-header">
+    <a class="navbar-brand" href="/">uClickr</a> |
+  </div>
+  <ul class="nav navbar-nav">
+    <li><a href="/student">Student</a></li>
+    <li><a class="nav navbar-nav" href="/prof">Prof</a></li>
+  </ul>
+</div>
 </nav>
 
 <body>
-{% block body %}
-<div class="bg-primary">BODY</div>
-{% endblock %}
-<div class="bg-primary">BODY</div>
+<div class="banner">
+  <div class="bannertext">
+  {% block bannertext %}
+    FREE THE CLASSROOM
+  {% endblock %}
+  </div>
+</div>
 </body>
 
 <footer>
