@@ -37,3 +37,11 @@ def receiveQuestion (request):
 def index(request):
 	ctd = {}
 	return render(request, 'index.html', context=ctd)
+
+def prof(request):
+	ctd = {}
+	return render(request, 'prof.html', context=ctd)
+
+def student(request):
+	ctd = {}
+	return render(request, 'student.html', context=ctd)
