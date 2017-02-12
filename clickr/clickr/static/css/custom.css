@@ -31,10 +31,15 @@
 	width:100%%;
 	border-radius: 5px;
 	background-color: #fafafa;
-	margin: 20px;
+	margin-top: 20px;
+	margin-bottom: 10px;
 }
 .option {
-	width:100%%;
+	width:75%;
 	background-color: rgba(200,200,200,0.5);
 	border: 1px;
+	margin-left: 10%;
+}
+.list-group-item:hover {
+	background-color: rgba(200,200,200,0.25);;
 }
