@@ -7,8 +7,6 @@ from models import *
 from django.views.decorators.csrf import csrf_exempt
 
 import json
-import random
-
 
 def receiveName (request, professorName, class_label):
 	# take request
@@ -43,8 +41,13 @@ def receiveStudentName (request, studentName, class_label):
 	student, created = Student.objects.get_or_create(name=studentName)
 	room, created = Room.objects.get_or_create(label=class_label)
 	questions = room.questions.all()
-	questions_list = [(question.id, question.text, question.options.all()) for question in questions]
-
+	questions_list = []
+	for question in questions:
+		options = []
+		for option in question.options.all():
+			options.append(option.text)
+		questions_list.append((question.id, question.text, options))
+	print(questions_list)
 
 	return JsonResponse({
 			"questions": questions_list,
@@ -56,16 +59,21 @@ def receiveStudentName (request, studentName, class_label):
 def receiveQuestion (request, professorName, class_label):
 	# requestedProfName=request.Get.get('profName')
 	prof = Professor.objects.get(profName=professorName)
+	print(request.GET)
 	requestbody = json.loads(request.body)
 
-	requestedClassName=requestbody[class_label]
-	requestedText = requestbody['text']
-	requestedOptions = requestbody['options']
-	correctNumber = random.randint(0,len(requestedOptions)-1)
-	random.randint(a, b)
+	requestedClassName = class_label
+	requestedText = request.GET.get('question')
+	requestedOptions = request.GET.getlist('options')
+	correct = request.GET.get('correct')
+	print(requestedOptions)
 
-	qroom = Room(label=class_label)
-	qroom.save()
+	# requestedClassName=requestbody['className']
+	# requestedText = requestbody['text']
+	# requestedOptions = requestbody['options']
+	# correctNumber = requestbody['correct']
+
+	qroom, created = Room.objects.get_or_create(label=class_label)
 
 	requestedQuestion = Question(room = qroom,
 								className=requestedClassName,
@@ -74,21 +82,20 @@ def receiveQuestion (request, professorName, class_label):
 								 active=False)
 	requestedQuestion.save()
 
+	correctOption = Option(question=requestedQuestion, 
+	    	sequence=0, 
+	    	text=correct, 
+	    	correct=True)
+	correctOption.save()
+
 	# fill each option from requestedOptions list text
-
-	if len(requestedOptions)>0:
-		tempop = requestedOptions[0]
-		requestedOptions[0] = requestedOptions[correctNumber]
-		requestedOptions[correctNumber] = tempop
-
 	for index in range(len(requestedOptions)):
 		requestedOption = Option(question=requestedQuestion, 
-        	sequence=index, 
+        	sequence=index + 1, 
         	text=requestedOptions[index], 
         	correct=False)
-        if index==correctNumber:
-        	requestedOption.correct = True
         requestedOption.save()
+
 
 	return JsonResponse({
 		"prof_name": professorName, 
@@ -97,20 +104,6 @@ def receiveQuestion (request, professorName, class_label):
 		"question_id": requestedQuestion.id,
 		"options_text": requestedOptions})
 
-def getGraphNumbers (request):
-	activeQ = Questions.objects.get(active=True)
-	optionlist = Options.objects.get(question=activeQ)
-
-	tuplist = []
-	for index in range(len(optionlist)):
-		tuplist.append((optionlist[index].sequence,Student.objects.filter(options=optionlist[index]).count()))
-
-	tuplist.sort(key=lambda x: x[0])
-
-	return JsonResponse({
-			"options": [x[0] for x in tuplist],
-			"numbers": [x[1] for x in tuplist]
-		})
 
 def index(request):
 	ctd = {}

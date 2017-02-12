@@ -11,7 +11,7 @@ class Question(models.Model):
     room = models.ForeignKey('Room', related_name="questions")
 
 class Option(models.Model):
-    question = models.ForeignKey('Question' , on_delete=models.CASCADE)
+    question = models.ForeignKey('Question' , on_delete=models.CASCADE, related_name="options")
     sequence = models.IntegerField()
     text = models.TextField()
     correct = models.BooleanField()

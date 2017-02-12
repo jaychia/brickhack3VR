@@ -16,7 +16,7 @@
 	<form class="form-horizontal" id="qform">
 		<input class="formfield" type="text" placeholder="Question?" name="question">
 		<div id="js-new">
-		<input type="text" class="option formfield" placeholder="Correct Answer!" name="correct">
+		<input type="text" class="formfield" placeholder="Correct Answer!" name="correct">
 		</div>
 		<button id="js-add-question">Add</button>
 		<input type="submit" id="js-submit-question" value="Lock n' Load!">
@@ -50,8 +50,8 @@
 			e.preventDefault();
 			if (count > 3) {return;}
 			count++;
-			var letter = String.fromCharCode(98 + count).toUpperCase();
-			var newOption = $("<input type='text' class='option formfield' placeholder='Option " + letter + "''>");
+			var letter = String.fromCharCode(96 + count).toUpperCase();
+			var newOption = $("<input type='text' class='option formfield' placeholder='Option " + letter + "' name='options' >");
 			jsnew.append(newOption);
 		});
 
@@ -75,7 +75,10 @@
 			class_label = resp.room_label;
 			loginForm.hide();
 			activeDiv.show();
-			questions.append(resp.questions);
+			for (i = 0; i < resp.questions.length; i++) {
+				var q = $("<div class='question'>" + resp.questions[i] + "<form ><input action='prof/activate/" + resp.question_ids[i].toString() + "' type='submit' value='Activate'></input></form></div>");
+			questions.append(q);
+			}
 		}
 
 		submitQuestion.click(function(e) {
@@ -84,7 +87,7 @@
 			console.log(data);
 			$.ajax({
 				type:"POST",
-				url: "prof/" + prof_name + "/" + class_label + "/posting",
+				url: "prof/" + prof_name + "/" + class_label + "/posting" + "?" + data,
 				contentType: "application/json",
 				data: JSON.stringify(data),
 				success: function(r) {
@@ -99,7 +102,7 @@
 		});
 
 		function addQuestion(text, id) {
-			var q = $("<div class='question'>" + text + "<form ><input action='prof/activate/" + id + "' type='submit'>Activate</input></form></div>");
+			var q = $("<div class='question'>" + text + "<form ><input action='prof/activate/" + id.toString() + "' type='submit' value='Activate'></input></form></div>");
 			questions.append(q);
 		}
 
