@@ -15,10 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'/prof/<profName>', views.receiveName, name="receive_name"),
-    url(r'/prof/<profName>/<question>', views.receiveQuestion, name="receive_question")
-
+    url(r'prof/<profName>', views.receiveName, name="receive_name"),
+    url(r'prof/<profName>/<question>', views.receiveQuestion, name="receive_question"),
+    url(r'^prof$', views.prof, name="prof_home"),
+    url(r'^student$', views.student, name="student_home"),
+    url(r'^$', views.index, name="home"),
 ]
+
