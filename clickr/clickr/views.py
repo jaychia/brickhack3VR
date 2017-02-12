@@ -117,7 +117,7 @@ def turnOffQuestion(request, questionID):
 		tuplist.append((optionlist[index].sequence,Student.objects.filter(options=optionlist[index]).count()))
 	tuplist.sort(key=lambda x: x[0])
 
-	ws_publish(activeQ, activeQ.room)
+	ws_unpublish(activeQ, activeQ.room)
 
 	return JsonResponse({"counts": [x[1] for x in tuplist]})
 
@@ -190,13 +190,10 @@ def ws_publish(question, room):
 	options = []
 	for option in question.options.all():
 		options.append((option.id, option.text))
-	m = {'question_id': question.id, 'question_text': question.text, 'options': options}
+	m = {'type': 'activate','activatequestion_id': question.id, 'question_text': question.text, 'options': options}
 	Group('chat-'+room.label).send({'text': json.dumps(m)})
 
 def ws_unpublish(question, room):
-	options = []
-	for option in question.options.all():
-		options.append((option.id, option.text))
-	m = {'question_id': question.id, 'question_text': question.text, 'options': options}
+	m = {'type': 'deactivate','question_id': question.id, 'question_text': question.text}
 	Group('chat-'+room.label).send({'text': json.dumps(m)})
 
