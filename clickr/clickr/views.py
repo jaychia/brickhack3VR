@@ -107,7 +107,7 @@ def receiveQuestion (request, professorName, class_label):
 
 
 def turnOffQuestion(request, questionID):
-	activeQ = Questions.objects.get(pk=questionID)
+	activeQ = Question.objects.get(pk=questionID)
 	activeQ.active = False
 	activeQ.save()
 	optionlist = Options.objects.get(question=activeQ)
@@ -117,9 +117,9 @@ def turnOffQuestion(request, questionID):
 		tuplist.append((optionlist[index].sequence,Student.objects.filter(options=optionlist[index]).count()))
 	tuplist.sort(key=lambda x: x[0])
 
-	return JsonResponse({
-			# "counts": [x[1] for x in tuplist]
-		})
+	ws_publish(activeQ, activeQ.room)
+
+	return JsonResponse({"counts": [x[1] for x in tuplist]})
 
 def turnOnQuestion(request, questionID):
 	
@@ -132,7 +132,7 @@ def turnOnQuestion(request, questionID):
 	thisq.active = True
 	thisq.save()
 
-	ws_publish(q, q.room)
+	ws_publish(thisq, thisq.room)
 
 	return JsonResponse({})
 
@@ -151,7 +151,7 @@ def studentAnswers(request, studentID, questionID, optionSeq):
 
 	thisStudent.options.add(Option.objects.get(question=Question.objects.get(pk=questionsID), sequence=optionSeq))
 	thisStudent.save()
-	
+
 	return JsonResponse({
 		"answer_changed": overlap,
 		"student_id": studentID,
@@ -192,3 +192,11 @@ def ws_publish(question, room):
 		options.append((option.id, option.text))
 	m = {'question_id': question.id, 'question_text': question.text, 'options': options}
 	Group('chat-'+room.label).send({'text': json.dumps(m)})
+
+def ws_unpublish(question, room):
+	options = []
+	for option in question.options.all():
+		options.append((option.id, option.text))
+	m = {'question_id': question.id, 'question_text': question.text, 'options': options}
+	Group('chat-'+room.label).send({'text': json.dumps(m)})
+
