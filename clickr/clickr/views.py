@@ -105,6 +105,33 @@ def receiveQuestion (request, professorName, class_label):
 		"options_text": requestedOptions})
 
 
+def turnOffQuestion(request, questionID):
+	activeQ = Questions.objects.get(pk=questionID)
+	activeQ.active = False
+	optionlist = Options.objects.get(question=activeQ)
+
+	tuplist = []
+	for index in range(len(optionlist)):
+		tuplist.append((optionlist[index].sequence,Student.objects.filter(options=optionlist[index]).count()))
+	tuplist.sort(key=lambda x: x[0])
+
+	return JsonResponse({
+			"counts": [x[1] for x in tuplist]
+		})
+
+def turnOnQuestion(request, questionID):
+	
+	if Question.objects.filter(active=True).exists():
+		Question.objects.get(active=True).active = False
+
+	Question.objects.get(pk=questionID).active = True
+
+	return JsonResponse({
+		"question_id": questionID,
+		"options_text": requestedOptions})
+
+
+
 def index(request):
 	ctd = {}
 	return render(request, 'index.html', context=ctd)
