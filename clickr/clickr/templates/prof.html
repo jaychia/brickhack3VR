@@ -98,6 +98,7 @@
 			e.preventDefault();
 			var data = qform.serialize();
 			console.log(data);
+			console.log(class_label);
 			$.ajax({
 				type:"POST",
 				url: "prof/" + prof_name + "/" + class_label + "/posting" + "?" + data,
@@ -115,7 +116,7 @@
 		});
 
 		function addQuestion(text, id) {
-			var q = $("<div class='question'>" + text + "<form ><input data-id='" + resp.question_ids[i].toString() + "' type='submit' value='Activate' class='activatebutton'></input></form></div>");
+			var q = $("<div class='question'>" + text + "<form ><input data-id='" + id.toString() + "' type='submit' value='Activate' class='activatebutton'></input></form></div>");
 			questions.append(q);
 		}
 
