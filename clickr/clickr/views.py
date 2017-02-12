@@ -9,7 +9,7 @@ from .models import Student
 
 from django.views.decorators.csrf import csrf_exempt
 
-def receiveName (request, professorName):
+def receiveName (request, professorName, class_label):
 	# take request
 
 	if Professor.objects.filter(profName=professorName).exists():
@@ -18,6 +18,8 @@ def receiveName (request, professorName):
 		new_prof = True
         prof = Professor(profName = professorName)
         prof.save()
+
+	room, create = Room.objects.get_or_create(label=class_label)
 
 	return JsonResponse({'new_prof': new_prof, 'prof_name': professorName, 'id':prof.id})
 
@@ -63,3 +65,17 @@ def prof(request):
 def student(request):
 	ctd = {}
 	return render(request, 'student.html', context=ctd)
+
+def get_room(request):
+	label = request.POST.get('room')
+    # If the room with the given label doesn't exist, automatically create it
+    # upon first visit (a la etherpad).
+	room, created = Room.objects.get_or_create(label=label)
+
+    # We want to show the last 10 questions, ordered most-recent-last
+	questions = reversed(room.questions[:30])
+
+	return render(request, "room.html", {
+	    'class': room,
+	    'questions': questions,
+	})
