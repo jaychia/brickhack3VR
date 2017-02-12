@@ -13,13 +13,13 @@
 	</form>
 </div>
 <div class="col-xs-6 well bs-component centered shadowed" id="js-active-div">
-	<form class="form-horizontal">
+	<form class="form-horizontal" id="qform">
 		<input class="formfield" type="text" placeholder="Question?" name="question">
 		<div id="js-new">
-		<input type="text" class="option formfield" placeholder="Option A">
+		<input type="text" class="option formfield" placeholder="Correct Answer!" name="correct">
 		</div>
 		<button id="js-add-question">Add</button>
-		<input type="submit" value="Lock n' Load!">
+		<input type="submit" id="js-submit-question" value="Lock n' Load!">
 	</form>
 	<div id="js-questions">
 	</div>
@@ -39,6 +39,10 @@
 		var questions = $("#js-questions");
 		var activeDiv = $("#js-active-div");
 		var profnamebanner = $("#profnamebanner");
+		var submitQuestion = $("#js-submit-question");
+		var prof_name = "";
+		var class_label = "";
+		var qform = $("#qform");
 
 		activeDiv.hide();
 
@@ -46,7 +50,7 @@
 			e.preventDefault();
 			if (count > 3) {return;}
 			count++;
-			var letter = String.fromCharCode(97 + count).toUpperCase();
+			var letter = String.fromCharCode(98 + count).toUpperCase();
 			var newOption = $("<input type='text' class='option formfield' placeholder='Option " + letter + "''>");
 			jsnew.append(newOption);
 		});
@@ -67,9 +71,36 @@
 		function showQuestions(resp) {
 			console.log(resp.prof_name);
 			profnamebanner.text("Welcome, " + resp.prof_name);
+			prof_name = resp.prof_name;
+			class_label = resp.room_label;
 			loginForm.hide();
 			activeDiv.show();
 			questions.append(resp.questions);
+		}
+
+		submitQuestion.click(function(e) {
+			e.preventDefault();
+			var data = qform.serialize();
+			console.log(data);
+			$.ajax({
+				type:"POST",
+				url: "prof/" + prof_name + "/" + class_label + "/posting",
+				contentType: "application/json",
+				data: JSON.stringify(data),
+				success: function(r) {
+					console.log(r);
+					qform[0].reset();
+					addQuestion(r.question_text, r.question_id);
+				},
+				error: function(e) {
+					alert('oh shit');
+				}
+			});
+		});
+
+		function addQuestion(text, id) {
+			var q = $("<div class='question'>" + text + "<form ><input action='prof/activate/" + id + "' type='submit'>Activate</input></form></div>");
+			questions.append(q);
 		}
 
 	});

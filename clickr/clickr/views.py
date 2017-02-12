@@ -51,12 +51,12 @@ def receiveStudentName (request, studentName, class_label):
 		})
 
 @csrf_exempt
-def receiveQuestion (request, professorName, class_label, question):
+def receiveQuestion (request, professorName, class_label):
 	# requestedProfName=request.Get.get('profName')
 	prof = Professor.objects.get(profName=professorName)
 	requestbody = json.loads(request.body)
 
-	requestedClassName=requestbody['className']
+	requestedClassName=requestbody[class_label]
 	requestedText = requestbody['text']
 	requestedOptions = requestbody['options']
 	correctNumber = requestbody['correct']
