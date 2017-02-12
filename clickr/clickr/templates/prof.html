@@ -8,6 +8,7 @@
 <div class="col-xs-6 well bs-component centered shadowed" id="js-login-div">
 	<form class="form-horizontal">
 		<input id="login-field" class="formfield" type="text" placeholder="What is your name, monseiur?" name="name">
+		<input id="class-field" class="formfield" type="text" placeholder="What class are you terrorizing the young minds with today?" name="class_label">
 		<input id="login-submit" type="submit">
 	</form>
 </div>
@@ -33,6 +34,7 @@
 		var jsnew = $("#js-new");
 		var loginButton = $("#login-submit");
 		var loginField = $("#login-field");
+		var classField = $("#class-field");
 		var loginForm = $("#js-login-div");
 		var questions = $("#js-questions");
 		var activeDiv = $("#js-active-div");
@@ -52,7 +54,7 @@
 		loginButton.click(function(e){
 			e.preventDefault();
 			$.ajax({
-				url: "prof/" + loginField.val(),
+				url: "prof/" + loginField.val() + '/' + classField.val(),
 				success: function(resp) {
 					showQuestions(resp);
 				},

@@ -2,10 +2,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Professor
-from .models import Question
-from .models import Option
-from .models import Student
+from models import *
 
 from django.views.decorators.csrf import csrf_exempt
 
