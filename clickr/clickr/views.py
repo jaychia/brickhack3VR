@@ -7,6 +7,7 @@ from .models import Question
 from .models import Option
 from .models import Student
 
+from django.views.decorators.csrf import csrf_exempt
 
 def receiveName (request, professorName):
 	# take request
@@ -20,16 +21,19 @@ def receiveName (request, professorName):
 
 	return JsonResponse({'new_prof': new_prof, 'prof_name': professorName, 'id':prof.id})
 
-
+@csrf_exempt
 def receiveQuestion (request, professorName, question):
 	# requestedProfName=request.Get.get('profName')
 	prof = Professor.objects.get(profName=professorName)
 	requestedClassName=request.POST.get('className')
 	requestedText = request.POST.get('text')
 	requestedOptions = request.POST.get('options')
-	correctNumber = int(request.POST.get('correct'))
+	correctNumber = request.POST.get('correct')
 
-	requestedQuestion = Question(className = requestedClassName, professor=prof, text=requestedText,active=true)
+	requestedQuestion = Question(className=requestedClassName,
+								 professor=prof,
+								 text=requestedText,
+								 active=False)
 	requestedQuestion.save()
 
 	# fill each option from requestedOptions list text
