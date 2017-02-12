@@ -8,9 +8,10 @@ from .models import Option
 from .models import Student
 
 
-def receiveName (request):
+def receiveName (request, profName):
 	# take request
-
+	print(profName)
+	
 	requestedProfName=request.Get.get('profName')
 	# requestedClassName=request.Get.get('className')
 	# requestedText=request.Get.get('text')
@@ -28,7 +29,7 @@ def receiveName (request):
 	return JsonResponse({'new_prof': new_prof, 'prof_name': requestedProfName, 'id':prof.id})
 
 
-def receiveQuestion (request):
+def receiveQuestion (request, profName, question):
 	requestedProfName=request.Get.get('profName')
 	prof = Professor.object.get(profName=requestedProfName)
 	requestedClassName=request.Post.get('className')
@@ -40,12 +41,19 @@ def receiveQuestion (request):
 	requestedQuestion.save()
 
 	for index in range(len(requestedOptions)):
-        requestedOption = Option(question= requestedQuestion,sequence=index, text=requestedOptions[index], correct =false)
+		requestedOption = Option(question=requestedQuestion, 
+        	sequence=index, 
+        	text=requestedOptions[index], 
+        	correct=false)
         if index==correctNumber:
         	requestedOption.correct = true
         requestedOption.save()
 
-    return JsonResponse({'prof_name': requestedProfName, 'prof':prof, 'question_name'=requestedQuestion.profName, 'question'=requestedQuestion})
+	return JsonResponse({
+		'prof_name': requestedProfName, 
+		'prof': prof, 
+		'question_name': requestedQuestion.profName, 
+		'question': requestedQuestion})
 
 
 def index(request):
