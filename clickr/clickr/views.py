@@ -130,6 +130,26 @@ def turnOnQuestion(request, questionID):
 		"question_id": questionID,
 		"options_text": requestedOptions})
 
+def studentAnswers(request, studentID, questionID, optionSeq):
+	
+	overlap = False
+
+	thisStudent = Student.objects.get(pk=StudentID)
+	overlapOption = None
+
+	for opt in thisStudent.options:
+		if opt.question.id == questionID:
+			overlap = True
+			thisStudent.options.remove(opt)
+
+	thisStudent.options.add(Option.objects.get(question=Question.objects.get(pk=questionsID), sequence=optionSeq))
+
+	return JsonResponse({
+		"answer_changed": overlap,
+		"student_id": studentID,
+		"question_id": questionID,
+		"option_id": thisStudet.options.get(question=Question.objects.get(pk=questionID)).id,
+		"options_select": optionSeq})
 
 
 def index(request):
